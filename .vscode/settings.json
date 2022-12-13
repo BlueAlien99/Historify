@@ -1,0 +1,34 @@
+{
+  "workbench.colorCustomizations": {
+    //   "titleBar.activeForeground": "#cfd8dc",
+    //   "titleBar.inactiveForeground": "#cfd8dc",
+    //   "titleBar.activeBackground": "#1976d2",
+    //   "titleBar.inactiveBackground": "#1565c0"
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // turn it off for JS and JSX, we will do this via eslint
+  "[javascript]": {
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[javascriptreact]": {
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescript]": {
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "eslint.alwaysShowStatus": true,
+  // tell the ESLint plugin to run on save
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "emmet.triggerExpansionOnTab": true,
+  "typescript.preferences.quoteStyle": "single"
+}

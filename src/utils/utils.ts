@@ -2,23 +2,20 @@
 
 const sha256 = async (plain: string) => {
     const data = new TextEncoder().encode(plain);
-    return crypto.subtle.digest("SHA-256", data);
+    return crypto.subtle.digest('SHA-256', data);
 };
 
-const base64URLEncode = (a: ArrayBuffer) => {
+const base64URLEncode = (a: ArrayBuffer) =>
     // Convert the ArrayBuffer to string using Uint8 array.
     // btoa takes chars from 0-255 and base64 encodes.
     // Then convert the base64 encoded to base64url encoded.
     // (replace + with -, replace / with _, trim trailing =)
 
-    // @ts-ignore
-    return btoa(String.fromCharCode.apply(null, new Uint8Array(a)))
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_")
-        .replace(/=+$/, "");
-};
+    btoa(String.fromCharCode.apply(null, new Uint8Array(a) as unknown as number[]))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
 
-export const pkceChallengeFromVerifier = async (v: string) =>
-    base64URLEncode(await sha256(v));
+export const pkceChallengeFromVerifier = async (v: string) => base64URLEncode(await sha256(v));
 
 export const getQueryParams = () => new URLSearchParams(window.location.search);
