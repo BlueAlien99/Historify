@@ -1,0 +1,22 @@
+{
+  "name": "historify",
+  "author": "BlueAlien99",
+  "license": "ISC",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Primitive Spotify history extractor",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/qs": "^6.9.7",
+    "typescript": "^4.9.4",
+    "vite": "^4.0.1"
+  },
+  "dependencies": {
+    "qs": "^6.11.0"
+  }
+}
