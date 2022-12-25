@@ -13,7 +13,8 @@ body,
     margin: 0;
 }
 
-button {
+.btn {
+    display: block;
     font: inherit;
     color: inherit;
     background-color: #455a64;
@@ -24,18 +25,18 @@ button {
     transition: transform .3s, background-color .3s;
 }
 
-button:hover {
+.btn:hover {
     background-color: #546e7a;
     transform: translateX(5px);
 }
 
-button:active {
+.btn:active {
     background-color: #607d8b;
     transform: translateX(-5px);
     transition: transform .1s, background-color .1s;
 }
 
-button:disabled {
+.btn:disabled {
     pointer-events: none;
     filter: brightness(.7);
 }
@@ -44,7 +45,8 @@ button:disabled {
     width: 100%;
     height: 100%;
     display: grid;
-    align-content: center;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
     justify-items: center;
 }
 
@@ -53,4 +55,27 @@ button:disabled {
     display: flex;
     flex-direction: column;
     max-width: 360px;
+}
+
+#file-input {
+    text-align-last: center;
+}
+
+#file-input label:focus-within {
+    outline: 1px solid #ddd;
+}
+
+#file-input input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    z-index: -100;
+}
+
+#file-input .stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 .5em;
+    margin: .25em;
 }

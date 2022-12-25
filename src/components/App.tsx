@@ -7,6 +7,7 @@ import {
     getRecentlyPlayed,
     Token,
 } from '@/helpers/requests';
+import FileInput from './FileInput';
 
 function App() {
     const token = useMemo(loadToken, []);
@@ -39,17 +40,21 @@ function App() {
     return (
         <div className="App">
             <div id="controls">
-                <button type="button" onClick={fetchHistory}>
+                <FileInput />
+                <button type="button" className="btn" onClick={fetchHistory}>
                     Fetch history!
                 </button>
                 <button
                     type="button"
+                    className="btn"
                     onClick={() => downloadHistory(history)}
                     disabled={!history.length}
                 >
                     Download history!
                 </button>
-                <button type="button">CSS test!</button>
+                <button type="button" className="btn">
+                    CSS test!
+                </button>
             </div>
         </div>
     );

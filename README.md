@@ -13,7 +13,6 @@ VITE_REDIRECT_URI=http://localhost:8080/callback
 ## ToDo
 
 - Fetch whole history
-- Upload history json and append recent history
 - Fetch missing history and merge
 - Errors, token expiration, refreshing
 - Some stats (current/last month, top artists, songs, whole list)?
