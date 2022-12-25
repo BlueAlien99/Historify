@@ -15,6 +15,3 @@ VITE_REDIRECT_URI=http://localhost:8080/callback
 - Fetch whole history
 - Fetch missing history and merge
 - Errors, token expiration, refreshing
-- Some stats (current/last month, top artists, songs, whole list)?
-
-- Redux / React query, Types, etc.

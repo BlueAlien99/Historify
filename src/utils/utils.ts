@@ -19,3 +19,5 @@ const base64URLEncode = (a: ArrayBuffer) =>
 export const pkceChallengeFromVerifier = async (v: string) => base64URLEncode(await sha256(v));
 
 export const getQueryParams = () => new URLSearchParams(window.location.search);
+
+export const msToMin = (ms: number) => (ms / (60 * 1000)).toFixed();

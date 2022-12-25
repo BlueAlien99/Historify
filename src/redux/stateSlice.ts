@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { HistoryEntry } from '@/types/spotifyApi';
+import { HistoryApiEntry, HistoryEntry } from '@/types/spotifyApi';
+import { RootState } from './store';
 
 interface BackupFile {
     filename: string;
@@ -30,6 +31,7 @@ const stateSlice = createSlice({
 
 export const { backupFileLoaded } = stateSlice.actions;
 
-// export const selectCount = (state: RootState) => state.counter.value
+export const selectPureHistory = (state: RootState) =>
+    state.state.history.filter(e => !e.gap) as HistoryApiEntry[];
 
 export const stateReducer = stateSlice.reducer;

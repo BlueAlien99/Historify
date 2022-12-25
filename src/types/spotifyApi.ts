@@ -11,7 +11,7 @@ export interface HistoryApiEntry {
     gap: undefined;
 }
 
-interface Track {
+export interface Track {
     album: Album;
     artists: Artist[];
     available_markets: string[];
@@ -31,7 +31,7 @@ interface Track {
     uri: string;
 }
 
-interface Album {
+export interface Album {
     album_type: 'album' | 'single' | 'compilation';
     artists: Artist[];
     available_markets: string[];
@@ -47,7 +47,7 @@ interface Album {
     uri: string;
 }
 
-interface Artist {
+export interface Artist {
     external_urls: ExternalUrls;
     href: string;
     id: string;

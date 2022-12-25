@@ -6,6 +6,14 @@ const importResolverSettings = {
     },
 };
 
+const noUnusedVars = [
+    1,
+    {
+        ignoreRestSiblings: true,
+        argsIgnorePattern: 'res|next|^err|^_+$',
+    },
+];
+
 const eslintRules = {
     'no-console': 'warn',
     'no-void': 'off',
@@ -39,13 +47,7 @@ const eslintRules = {
     'no-await-in-loop': 0,
     'no-return-assign': ['error', 'except-parens'],
     'no-restricted-syntax': [2, 'ForInStatement', 'LabeledStatement', 'WithStatement'],
-    'no-unused-vars': [
-        1,
-        {
-            ignoreRestSiblings: true,
-            argsIgnorePattern: 'res|next|^err',
-        },
-    ],
+    'no-unused-vars': noUnusedVars,
     'prefer-const': [
         'error',
         {
@@ -165,6 +167,8 @@ module.exports = {
                 'react/jsx-filename-extension': [1, { extensions: ['.ts', '.tsx'] }],
                 ...eslintRules,
                 ...prettierRules,
+                'no-unused-vars': 'off',
+                '@typescript-eslint/no-unused-vars': noUnusedVars,
             },
             settings: { ...importResolverSettings },
         },
