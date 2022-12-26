@@ -1,18 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
-import {
-    downloadHistory,
-    getAuthURL,
-    getToken,
-    loadToken,
-    getRecentlyPlayed,
-    Token,
-} from '@/helpers/requests';
-import FileInput from './FileInput';
+import { useEffect } from 'react';
+import { getAuthURL, getToken, loadToken } from '@/helpers/requests';
+import FileInput from './controls/FileInput';
+import FetchHistory from './controls/FetchHistory';
+import DownloadHistory from './controls/DownloadHistory';
 
 function Controls() {
-    const token = useMemo(loadToken, []);
-    const [history, setHistory] = useState([] as any[]);
-
     useEffect(() => {
         if (window.location.pathname.startsWith('/callback')) {
             void getToken().then(body => {
@@ -30,27 +22,11 @@ function Controls() {
         }
     }, []);
 
-    const fetchHistory = () => {
-        void getRecentlyPlayed(token as Token).then(items =>
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-assignment
-            setHistory(oldHistory => [...oldHistory, ...items])
-        );
-    };
-
     return (
         <div id="controls">
             <FileInput />
-            <button type="button" className="btn" onClick={fetchHistory}>
-                Fetch history!
-            </button>
-            <button
-                type="button"
-                className="btn"
-                onClick={() => downloadHistory(history)}
-                disabled={!history.length}
-            >
-                Download history!
-            </button>
+            <FetchHistory />
+            <DownloadHistory />
         </div>
     );
 }

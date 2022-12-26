@@ -1,5 +1,6 @@
 import qs from 'qs';
 import { getQueryParams, pkceChallengeFromVerifier } from '@/utils/utils';
+import { RecentlyPlayedResponse } from '@/types/spotifyApi';
 
 const BASE_URI = 'https://api.spotify.com/v1';
 
@@ -59,23 +60,14 @@ export const getToken = () => {
     }).then(res => res.json());
 };
 
-export const getRecentlyPlayed = (token: Token) =>
-    fetch(`${BASE_URI}/me/player/recently-played?limit=50`, {
+export const getRecentlyPlayed = (token: Token, nextUrl?: string) =>
+    fetch(nextUrl ?? `${BASE_URI}/me/player/recently-played?limit=50`, {
         headers: {
             Authorization: `${token.token_type} ${token.access_token}`,
             'Content-Type': 'application/json',
         },
-    })
-        .then(res => res.json())
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        .then(data => data.items as unknown[]);
-
-export const downloadHistory = (history: any[]) => {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(
-        new Blob([JSON.stringify(history, undefined, 2)], { type: 'text/json' })
+    }).then(
+        res =>
+            // TODO: super unsafe
+            res.json() as Promise<RecentlyPlayedResponse>
     );
-    a.download = 'spotify_history.json';
-    a.click();
-    a.remove();
-};

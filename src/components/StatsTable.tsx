@@ -43,8 +43,8 @@ function StatsTable({ name, data }: Props) {
         <table id="stats-table">
             <colgroup>
                 <col span={1} style={{ width: '100%' }} />
-                <col span={1} style={{ minWidth: '8ch' }} />
-                <col span={1} style={{ minWidth: '8ch' }} />
+                <col span={1} style={{ minWidth: '10ch' }} />
+                <col span={1} style={{ minWidth: '10ch' }} />
             </colgroup>
             <thead>
                 <tr>

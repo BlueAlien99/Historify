@@ -39,11 +39,12 @@ function FileInput() {
         event.target.value = '';
     };
 
+    // TODO: deduplicate stats
     return (
         <div id="file-input">
             <label className="btn">
                 <input type="file" accept=".json" onChange={handleChange} />
-                Use backup!
+                Use backup
             </label>
             <div className="stats">
                 <span>Filename: {backupFile?.filename}</span>

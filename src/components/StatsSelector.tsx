@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAppSelector } from '@/redux/hooks';
-import { selectPureHistory } from '@/redux/stateSlice';
+import { selectPureHistory } from '@/redux/stateSelectors';
 import Stats from './Stats';
 
 interface Props {

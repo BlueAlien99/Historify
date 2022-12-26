@@ -72,3 +72,11 @@ interface Image {
 interface ExternalUrls {
     spotify: string;
 }
+
+export interface RecentlyPlayedResponse {
+    cursors: { after: string; before: string };
+    href: string;
+    items: HistoryApiEntry[];
+    limit: number;
+    next: string | null;
+}
