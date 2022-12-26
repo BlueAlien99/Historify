@@ -51,9 +51,6 @@ function Controls() {
             >
                 Download history!
             </button>
-            <button type="button" className="btn">
-                CSS test!
-            </button>
         </div>
     );
 }

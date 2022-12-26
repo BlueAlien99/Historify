@@ -78,7 +78,7 @@ function Stats({ history }: Props) {
     return (
         <>
             <span>Total time: {msToMin(totalTime)}</span>
-            <span>Total tracks: {history.length}</span>
+            <span>Total streams: {history.length}</span>
             <StatsTable name="Artist" data={normalizedArtists} />
             <StatsTable name="Track" data={normalizedTracks} />
         </>

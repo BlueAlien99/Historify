@@ -48,9 +48,9 @@ function FileInput() {
             <div className="stats">
                 <span>Filename: {backupFile?.filename}</span>
                 <span>Gaps: {backupFile?.history.filter(e => e.gap).length ?? ''}</span>
-                <span>Tracks: {pureHistory.length || ''}</span>
-                <span>From: {pureHistory.at(0)?.played_at}</span>
-                <span>To: {pureHistory.at(-1)?.played_at}</span>
+                <span>Streams: {pureHistory.length || ''}</span>
+                <span>From: {pureHistory.at(-1)?.played_at}</span>
+                <span>To: {pureHistory.at(0)?.played_at}</span>
             </div>
         </div>
     );

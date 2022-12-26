@@ -50,14 +50,21 @@ function StatsTable({ name, data }: Props) {
                 <tr>
                     <th>{name}</th>
                     <th onClick={changeSortMode(1)}>Time {getSortMark(1)}</th>
-                    <th onClick={changeSortMode(2)}>Tracks {getSortMark(2)}</th>
+                    <th onClick={changeSortMode(2)}>Streams {getSortMark(2)}</th>
                 </tr>
             </thead>
             <tbody>
                 {sortedData.map(d => (
                     <tr key={d[0].id}>
                         <td>
-                            <a href={d[0].external_urls.spotify}>{d[0].name}</a>
+                            <a href={d[0].external_urls.spotify} target="_blank" rel="noreferrer">
+                                {d[0].name}
+                            </a>
+                            {d[0].type === 'track' && (
+                                <span id="track-artists">
+                                    {d[0].artists.map(a => a.name).join(', ')}
+                                </span>
+                            )}
                         </td>
                         <td>{msToMin(d[1])}</td>
                         <td>{d[2]}</td>
