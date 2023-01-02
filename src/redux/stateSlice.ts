@@ -17,7 +17,7 @@ export interface BackupFile {
     filename: string;
     content:
         | ExporterApiHistoryItem[]
-        | { history: ExporterApiExtendedHistoryItem[]; searchCache: SearchCache };
+        | { history: ExporterApiHistoryItem[]; searchCache: SearchCache };
 }
 
 interface RecentlyPlayedApi {

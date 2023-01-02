@@ -6,7 +6,9 @@ export const downloadBackup = (
     history: ExporterApiExtendedHistoryItem[],
     searchCache: SearchCache
 ) => {
-    const content: BackupFile['content'] = { history, searchCache };
+    const liteHistory = history.map(({ track, ...item }) => item);
+
+    const content: BackupFile['content'] = { history: liteHistory, searchCache };
 
     const a = document.createElement('a');
     a.href = URL.createObjectURL(
@@ -23,7 +25,7 @@ function DownloadBackup() {
 
     const searchCacheSize = Object.keys(searchCache).length;
 
-    const enabled = !!(history.length && searchCacheSize);
+    const enabled = !!(history.length || searchCacheSize);
 
     return (
         <div>
@@ -37,8 +39,8 @@ function DownloadBackup() {
             </button>
             <div className="stats">
                 <span>Streams: {history.length}</span>
-                <span>From: {history.at(-1)?.endTime}</span>
-                <span>To: {history.at(0)?.endTime}</span>
+                <span>From: {history.at(0)?.endTime}</span>
+                <span>To: {history.at(-1)?.endTime}</span>
                 <span>Search cache items: {searchCacheSize}</span>
             </div>
         </div>

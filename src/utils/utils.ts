@@ -24,3 +24,6 @@ export const msToMin = (ms: number) => (ms / (60 * 1000)).toFixed();
 
 export const trackArtistQuery = (track: string, artist: string) =>
     `track:${track} artist:${artist}`;
+
+export const niceNumber = (val: number) =>
+    val.toFixed().length <= 1 ? val.toFixed(1) : val.toFixed();

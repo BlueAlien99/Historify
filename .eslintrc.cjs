@@ -42,7 +42,7 @@ const eslintRules = {
     // Wes Bos
     'no-debugger': 0,
     'no-use-before-define': 'off',
-    'import/no-cycle': 'off',
+    // 'import/no-cycle': 'off',
     'no-alert': 0,
     'no-await-in-loop': 0,
     'no-return-assign': ['error', 'except-parens'],

@@ -1,6 +1,6 @@
 import { ExporterApiExtendedHistoryItem, ExporterApiHistoryItem } from '@/types/exporterApi';
 import { Artist, Track } from '@/types/spotifyApi';
-import { msToMin, trackArtistQuery } from '@/utils/utils';
+import { msToMin, niceNumber, trackArtistQuery } from '@/utils/utils';
 import ArtistsStatsTable from './ArtistsStatsTable';
 import TracksStatsTable from './TracksStatsTable';
 
@@ -111,7 +111,7 @@ function HistoryStats({ data }: Props) {
     return (
         <>
             <span>Total time: {msToMin(totalTime)}</span>
-            <span>Total streams: {totalStreams}</span>
+            <span>Total streams: {niceNumber(totalStreams)}</span>
             <ArtistsStatsTable data={normalizedArtists} />
             <TracksStatsTable data={normalizedTracks} />
         </>

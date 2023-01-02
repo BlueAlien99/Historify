@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { msToMin } from '@/utils/utils';
+import { msToMin, niceNumber } from '@/utils/utils';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { getSortMark, sort } from '@/utils/stats';
 import { sortConfigChanged } from '@/redux/stateSlice';
@@ -19,7 +19,7 @@ const getTableRow = (item: TracksStatsData[number]) => {
         return (
             <tr key={`${track.trackName}+${track.artistName}`}>
                 <td>
-                    {track.trackName}
+                    ⚠️ {track.trackName}
                     <span id="track-artists">{track.artistName}</span>
                 </td>
                 <td>{msToMin(time)}</td>
@@ -37,7 +37,7 @@ const getTableRow = (item: TracksStatsData[number]) => {
                 <span id="track-artists">{track.artists.map(a => a.name).join(', ')}</span>
             </td>
             <td>{msToMin(time)}</td>
-            <td>{streams}</td>
+            <td>{niceNumber(streams)}</td>
         </tr>
     );
 };

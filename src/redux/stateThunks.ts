@@ -4,7 +4,7 @@ import { RecentlyPlayedItem } from '@/types/recentlyPlayedApi';
 import { Track } from '@/types/spotifyApi';
 import { SearchResponse } from '@/types/searchApi';
 import { trackArtistQuery } from '@/utils/utils';
-import { AppDispatch, RootState } from './store';
+import type { AppDispatch, RootState } from './store';
 
 interface ThunkApi {
     dispatch: AppDispatch;
@@ -48,6 +48,8 @@ export const searchResultsFetched = createAction<{ query: string; response: Sear
 
 export const apiRequestFailed = createAction<{ message: string }>('state/apiRequestFailed');
 
+let x = 0;
+
 export const searchForTrack = createAsyncThunk<
     Track | null,
     { name: string; artist: string; cacheOnly?: boolean },
@@ -62,6 +64,12 @@ export const searchForTrack = createAsyncThunk<
         if (cacheOnly) {
             return null;
         }
+
+        // TODO: remove
+        if (x > 20) {
+            return null;
+        }
+        x += 1;
 
         const token = loadToken();
 
