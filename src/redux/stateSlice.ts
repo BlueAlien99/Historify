@@ -2,13 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ExporterApiExtendedHistoryItem, ExporterApiHistoryItem } from '@/types/exporterApi';
 import { RecentlyPlayedItem } from '@/types/recentlyPlayedApi';
 import { SearchResponse } from '@/types/searchApi';
+import { apiRequestFailed, searchResultsFetched } from '@/helpers/search';
 import {
-    apiRequestFailed,
     fetchHistoryDetails,
     fetchRecentlyPlayed,
+    historyDetailsProgress,
     recentlyPlayedSliceFetched,
-    searchForTrack,
-    searchResultsFetched,
 } from './stateThunks';
 
 export type SearchCache = Record<string, SearchResponse | undefined>;
@@ -58,6 +57,7 @@ const initialState: AppState = {
     },
     searchApi: {
         state: 'idle',
+        // TODO: requests are not used anywhere
         requests: 0,
         currentIndex: 0,
     },
@@ -115,22 +115,8 @@ const stateSlice = createSlice({
             .addCase(apiRequestFailed, (state, { payload }) => {
                 state.apiError = payload.message;
             })
-            // TODO:
-            // .addCase(searchForTrack.pending, (state) => {
-            // })
-            // .addCase(searchForTrack.rejected, (state) => {
-            // })
-            .addCase(searchForTrack.fulfilled, (state, { payload }) => {
-                const item = state.history[state.searchApi.currentIndex];
-
-                if (
-                    payload &&
-                    item.trackName === payload.name &&
-                    item.artistName === payload.artists.at(0)?.name
-                ) {
-                    item.track = payload;
-                }
-                state.searchApi.currentIndex += 1;
+            .addCase(historyDetailsProgress, (state, { payload }) => {
+                state.searchApi.currentIndex = payload;
             })
             .addCase(fetchHistoryDetails.pending, state => {
                 state.searchApi = {
@@ -141,7 +127,8 @@ const stateSlice = createSlice({
             .addCase(fetchHistoryDetails.rejected, state => {
                 state.searchApi.state = 'failed';
             })
-            .addCase(fetchHistoryDetails.fulfilled, state => {
+            .addCase(fetchHistoryDetails.fulfilled, (state, { payload }) => {
+                state.history = payload.history;
                 state.searchApi.state = 'succeeded';
             });
     },

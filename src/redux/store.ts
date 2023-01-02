@@ -9,6 +9,7 @@ export const store = configureStore({
         getDefaultMiddleware({
             serializableCheck: {
                 ignoredPaths: ['state.history'],
+                ignoredActions: ['state/fetchHistoryDetails/fulfilled'],
             },
         }),
 });

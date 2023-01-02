@@ -54,6 +54,8 @@ export interface ExternalUrls {
 }
 
 export interface ApiError {
-    status: number;
-    message: string;
+    error: {
+        status: number;
+        message: string;
+    };
 }

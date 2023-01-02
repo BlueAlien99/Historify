@@ -83,8 +83,8 @@ export const searchForItem = (token: Token, query: string, itemTypes: string[]) 
         },
     }).then(async res => {
         if (!res.ok) {
-            const json = (await res.json()) as ApiError;
-            throw Error(`${json.status} ${json.message}`);
+            const { error } = (await res.json()) as ApiError;
+            throw Error(`${error.status} ${error.message}`);
         }
 
         // TODO: super unsafe

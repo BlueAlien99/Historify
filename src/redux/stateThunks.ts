@@ -1,9 +1,8 @@
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { getRecentlyPlayed, loadToken, searchForItem } from '@/helpers/requests';
+import { getRecentlyPlayed, loadToken } from '@/helpers/requests';
 import { RecentlyPlayedItem } from '@/types/recentlyPlayedApi';
-import { Track } from '@/types/spotifyApi';
-import { SearchResponse } from '@/types/searchApi';
-import { trackArtistQuery } from '@/utils/utils';
+import { ExporterApiExtendedHistoryItem } from '@/types/exporterApi';
+import { searchForTrack } from '@/helpers/search';
 import type { AppDispatch, RootState } from './store';
 
 interface ThunkApi {
@@ -42,74 +41,46 @@ export const fetchRecentlyPlayed = createAsyncThunk<void, void, ThunkApi>(
     }
 );
 
-export const searchResultsFetched = createAction<{ query: string; response: SearchResponse }>(
-    'state/searchResultsFetched'
-);
-
-export const apiRequestFailed = createAction<{ message: string }>('state/apiRequestFailed');
-
-let x = 0;
-
-export const searchForTrack = createAsyncThunk<
-    Track | null,
-    { name: string; artist: string; cacheOnly?: boolean },
-    ThunkApi
->('state/searchForTrack', async ({ name, artist, cacheOnly = false }, thunkApi) => {
-    const cache = thunkApi.getState().state.searchCache;
-    const query = encodeURIComponent(trackArtistQuery(name, artist));
-
-    let response = cache[query];
-
-    if (!response) {
-        if (cacheOnly) {
-            return null;
-        }
-
-        // TODO: remove
-        if (x > 20) {
-            return null;
-        }
-        x += 1;
-
-        const token = loadToken();
-
-        if (!token) {
-            return thunkApi.rejectWithValue('');
-        }
-
-        try {
-            response = await searchForItem(token, query, ['track']);
-            thunkApi.dispatch(searchResultsFetched({ query, response }));
-        } catch (err) {
-            thunkApi.dispatch(
-                apiRequestFailed({ message: err instanceof Error ? err.message : 'Unknown error' })
-            );
-            return thunkApi.rejectWithValue('');
-        }
-    }
-
-    if (!response.tracks) {
-        return null;
-    }
-
-    return (
-        response.tracks.items.find(
-            track => track.name === name && track.artists.at(0)?.name === artist
-        ) ?? null
-    );
-});
+export const historyDetailsProgress = createAction<number>('state/historyDetailsProgress');
 
 export const fetchHistoryDetails = createAsyncThunk<
-    void,
+    { history: ExporterApiExtendedHistoryItem[] },
     { cacheOnly?: boolean } | undefined,
     ThunkApi
     // eslint-disable-next-line default-param-last
 >('state/fetchHistoryDetails', async ({ cacheOnly = false } = {}, thunkApi) => {
-    const { history } = thunkApi.getState().state;
+    const history = [...thunkApi.getState().state.history];
 
-    for (const item of history) {
-        await thunkApi.dispatch(
-            searchForTrack({ name: item.trackName, artist: item.artistName, cacheOnly })
-        );
+    let isError = false;
+
+    for (let i = 0; i < history.length && !isError; i += 1) {
+        const item = history[i];
+        const cache = thunkApi.getState().state.searchCache;
+
+        // TODO: skip detailed data?
+
+        const result = await searchForTrack({
+            name: item.trackName,
+            artist: item.artistName,
+            cache,
+            cacheOnly,
+            dispatch: thunkApi.dispatch,
+            // eslint-disable-next-line no-loop-func
+        }).catch(() => {
+            isError = true;
+            return null;
+        });
+
+        if (
+            result &&
+            item.trackName === result.name &&
+            item.artistName === result.artists.at(0)?.name
+        ) {
+            history[i] = { ...item, track: result };
+            thunkApi.dispatch(historyDetailsProgress(i));
+        }
     }
+
+    thunkApi.dispatch(historyDetailsProgress(history.length));
+    return { history };
 });
