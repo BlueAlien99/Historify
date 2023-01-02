@@ -139,6 +139,10 @@ body,
     margin: .4em 0;
 }
 
+.audio {
+    position: relative;
+}
+
 .audio button {
     color: inherit;
     background-color: #fff2;
