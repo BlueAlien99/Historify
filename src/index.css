@@ -83,7 +83,8 @@ body,
     outline: 1px solid #ddd;
 }
 
-#file-input input[type="file"] {
+#file-input input[type="file"],
+.audio video {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -107,8 +108,8 @@ body,
     overflow-y: auto;
 }
 
-#stats-table td:nth-child(2),
-#stats-table td:nth-child(3) {
+#stats-table td:nth-last-child(1),
+#stats-table td:nth-last-child(2) {
     text-align: right;
     padding-right: 1ch;
 }
@@ -136,4 +137,10 @@ body,
     font-size: .6em;
     display: block;
     margin: .4em 0;
+}
+
+.audio button {
+    color: inherit;
+    background-color: #fff2;
+    border: none;
 }

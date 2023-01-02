@@ -5,6 +5,7 @@ import { getSortMark, sort } from '@/utils/stats';
 import { sortConfigChanged } from '@/redux/stateSlice';
 import { Track } from '@/types/spotifyApi';
 import { ExporterApiHistoryItem } from '@/types/exporterApi';
+import Audio from './Audio';
 
 // TODO: use objects instead of error-prone tuples
 
@@ -18,6 +19,7 @@ const getTableRow = (item: TracksStatsData[number]) => {
     if ('trackName' in track) {
         return (
             <tr key={`${track.trackName}+${track.artistName}`}>
+                <td />
                 <td>
                     ⚠️ {track.trackName}
                     <span id="track-artists">{track.artistName}</span>
@@ -30,6 +32,9 @@ const getTableRow = (item: TracksStatsData[number]) => {
 
     return (
         <tr key={track.id}>
+            <td>
+                <Audio src={track.preview_url} />
+            </td>
             <td>
                 <a href={track.external_urls.spotify} target="_blank" rel="noreferrer">
                     {track.name}
@@ -58,12 +63,14 @@ function TracksStatsTable({ data }: Props) {
     return (
         <table id="stats-table">
             <colgroup>
+                <col span={1} />
                 <col span={1} style={{ width: '100%' }} />
                 <col span={1} style={{ minWidth: '10ch' }} />
                 <col span={1} style={{ minWidth: '10ch' }} />
             </colgroup>
             <thead>
                 <tr>
+                    <th>⏯️</th>
                     {['Track', 'Time', 'Streams'].map((c, i) => (
                         <th onClick={changeSortMode(i)} key={c}>
                             {c} {getSortMark(i, sortConfig)}
