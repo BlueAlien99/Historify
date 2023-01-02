@@ -53,7 +53,7 @@ export const fetchHistoryDetails = createAsyncThunk<
 
     let isError = false;
 
-    for (let i = 0; i < history.length && !isError; i += 1) {
+    for (let i = 0; i < history.length; i += 1) {
         const item = history[i];
         const cache = thunkApi.getState().state.searchCache;
 
@@ -63,7 +63,7 @@ export const fetchHistoryDetails = createAsyncThunk<
             name: item.trackName,
             artist: item.artistName,
             cache,
-            cacheOnly,
+            cacheOnly: cacheOnly || isError,
             dispatch: thunkApi.dispatch,
             // eslint-disable-next-line no-loop-func
         }).catch(() => {

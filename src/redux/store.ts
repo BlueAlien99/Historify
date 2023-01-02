@@ -8,8 +8,11 @@ export const store = configureStore({
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({
             serializableCheck: {
-                ignoredPaths: ['state.history'],
-                ignoredActions: ['state/fetchHistoryDetails/fulfilled'],
+                ignoredPaths: ['state.history', 'state.searchCache'],
+                ignoredActions: [
+                    'state/fetchHistoryDetails/fulfilled',
+                    'state/searchResultsFetched',
+                ],
             },
         }),
 });

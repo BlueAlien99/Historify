@@ -123,6 +123,7 @@ const stateSlice = createSlice({
                     ...initialState.searchApi,
                     state: 'pending',
                 };
+                state.apiError = null;
             })
             .addCase(fetchHistoryDetails.rejected, state => {
                 state.searchApi.state = 'failed';
