@@ -5,6 +5,12 @@ export const store = configureStore({
     reducer: {
         state: stateReducer,
     },
+    middleware: getDefaultMiddleware =>
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredPaths: ['state.history'],
+            },
+        }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -1,16 +1,3 @@
-export type HistoryEntry = HistoryApiEntry | Gap;
-
-interface Gap {
-    gap: true;
-}
-
-export interface HistoryApiEntry {
-    track: Track;
-    played_at: string;
-    context: Context;
-    gap: undefined;
-}
-
 export interface Track {
     album: Album;
     artists: Artist[];
@@ -56,27 +43,17 @@ export interface Artist {
     uri: string;
 }
 
-interface Context {
-    type: string;
-    external_urls: ExternalUrls;
-    href: string;
-    uri: string;
-}
-
 interface Image {
     url: string;
     width: number;
     height: number;
 }
 
-interface ExternalUrls {
+export interface ExternalUrls {
     spotify: string;
 }
 
-export interface RecentlyPlayedResponse {
-    cursors: { after: string; before: string };
-    href: string;
-    items: HistoryApiEntry[];
-    limit: number;
-    next: string | null;
+export interface ApiError {
+    status: number;
+    message: string;
 }

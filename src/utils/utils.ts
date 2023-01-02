@@ -21,3 +21,6 @@ export const pkceChallengeFromVerifier = async (v: string) => base64URLEncode(aw
 export const getQueryParams = () => new URLSearchParams(window.location.search);
 
 export const msToMin = (ms: number) => (ms / (60 * 1000)).toFixed();
+
+export const trackArtistQuery = (track: string, artist: string) =>
+    `track:${track} artist:${artist}`;

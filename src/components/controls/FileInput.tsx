@@ -1,17 +1,11 @@
-import { useMemo } from 'react';
-import { backupFileLoaded } from '@/redux/stateSlice';
-import { HistoryApiEntry, HistoryEntry } from '@/types/spotifyApi';
+import { BackupFile, backupFileLoaded } from '@/redux/stateSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { fetchHistoryDetails } from '@/redux/stateThunks';
 
 function FileInput() {
     const dispatch = useAppDispatch();
 
-    const backupFile = useAppSelector(state => state.state.backupFile);
-
-    const pureHistory = useMemo(
-        () => (backupFile?.history.filter(e => !e.gap) as HistoryApiEntry[]) ?? [],
-        [backupFile]
-    );
+    const backupFilename = useAppSelector(state => state.state.backupFilename);
 
     const handleFileLoad = (filename: string) => (event: ProgressEvent<FileReader>) => {
         const rawData = event.target?.result;
@@ -21,8 +15,9 @@ function FileInput() {
         }
 
         // TODO: unsafe
-        const history = JSON.parse(rawData) as HistoryEntry[];
-        dispatch(backupFileLoaded({ filename, history }));
+        const content = JSON.parse(rawData) as BackupFile['content'];
+        dispatch(backupFileLoaded({ filename, content }));
+        void dispatch(fetchHistoryDetails({ cacheOnly: true }));
     };
 
     const handleChange: React.ChangeEventHandler<HTMLInputElement> = event => {
@@ -39,19 +34,15 @@ function FileInput() {
         event.target.value = '';
     };
 
-    // TODO: deduplicate stats
+    // TODO: upload status? e.g. if JSON.parse succeeded
     return (
         <div id="file-input">
             <label className="btn">
                 <input type="file" accept=".json" onChange={handleChange} />
-                Use backup
+                Use backup / history
             </label>
             <div className="stats">
-                <span>Filename: {backupFile?.filename}</span>
-                <span>Gaps: {backupFile?.history.filter(e => e.gap).length ?? ''}</span>
-                <span>Streams: {pureHistory.length || ''}</span>
-                <span>From: {pureHistory.at(-1)?.played_at}</span>
-                <span>To: {pureHistory.at(0)?.played_at}</span>
+                <span>Filename: {backupFilename}</span>
             </div>
         </div>
     );

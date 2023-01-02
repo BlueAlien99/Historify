@@ -1,6 +1,8 @@
-import { Artist, HistoryApiEntry, Track } from '@/types/spotifyApi';
+import { Artist, Track } from '@/types/spotifyApi';
 import { msToMin } from '@/utils/utils';
-import StatsTable from './StatsTable';
+import { RecentlyPlayedItem } from '@/types/recentlyPlayedApi';
+import ArtistsStatsTable from './ArtistsStatsTable';
+import TracksStatsTable from './TracksStatsTable';
 
 type TrackAggr = Record<
     string,
@@ -48,16 +50,16 @@ const normalizeArtists = (artists: ArtistAggr) =>
     });
 
 interface Props {
-    history: HistoryApiEntry[];
+    data: RecentlyPlayedItem[];
 }
 
-function Stats({ history }: Props) {
-    const totalTime = history.reduce((acc, cur) => acc + cur.track.duration_ms, 0);
+function RecentlyPlayedStats({ data }: Props) {
+    const totalTime = data.reduce((acc, cur) => acc + cur.track.duration_ms, 0);
 
     const trackAggr: TrackAggr = {};
     const artistAggr: ArtistAggr = {};
 
-    history.forEach(({ track }) => {
+    data.forEach(({ track }) => {
         addTrackToAggr(trackAggr, track);
 
         track.artists.forEach(artist => {
@@ -78,11 +80,11 @@ function Stats({ history }: Props) {
     return (
         <>
             <span>Total time: {msToMin(totalTime)}</span>
-            <span>Total streams: {history.length}</span>
-            <StatsTable name="Artist" data={normalizedArtists} />
-            <StatsTable name="Track" data={normalizedTracks} />
+            <span>Total streams: {data.length}</span>
+            <ArtistsStatsTable data={normalizedArtists} />
+            <TracksStatsTable data={normalizedTracks} />
         </>
     );
 }
 
-export default Stats;
+export default RecentlyPlayedStats;

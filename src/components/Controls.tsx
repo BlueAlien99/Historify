@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { getAuthURL, getToken, loadToken } from '@/helpers/requests';
 import FileInput from './controls/FileInput';
-import FetchHistory from './controls/FetchHistory';
-import DownloadHistory from './controls/DownloadHistory';
+import FetchRecentlyPlayed from './controls/FetchRecentlyPlayed';
+import DownloadBackup from './controls/DownloadBackup';
+import FetchHistoryDetails from './controls/FetchHistoryDetails';
 
 function Controls() {
     useEffect(() => {
@@ -24,9 +25,10 @@ function Controls() {
 
     return (
         <div id="controls">
+            <FetchRecentlyPlayed />
             <FileInput />
-            <FetchHistory />
-            <DownloadHistory />
+            <FetchHistoryDetails />
+            <DownloadBackup />
         </div>
     );
 }

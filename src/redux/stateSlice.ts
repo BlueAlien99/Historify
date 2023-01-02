@@ -1,33 +1,69 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { HistoryApiEntry, HistoryEntry } from '@/types/spotifyApi';
-import { fetchHistory, historySliceFetched } from './stateThunks';
-import { selectLastBackupEntry } from './stateSelectors';
+import { ExporterApiExtendedHistoryItem, ExporterApiHistoryItem } from '@/types/exporterApi';
+import { RecentlyPlayedItem } from '@/types/recentlyPlayedApi';
+import { SearchResponse } from '@/types/searchApi';
+import {
+    apiRequestFailed,
+    fetchHistoryDetails,
+    fetchRecentlyPlayed,
+    recentlyPlayedSliceFetched,
+    searchForTrack,
+    searchResultsFetched,
+} from './stateThunks';
 
-interface BackupFile {
+export type SearchCache = Record<string, SearchResponse | undefined>;
+
+export interface BackupFile {
     filename: string;
-    history: HistoryEntry[];
+    content:
+        | ExporterApiHistoryItem[]
+        | { history: ExporterApiExtendedHistoryItem[]; searchCache: SearchCache };
 }
 
-interface HistoryApi {
+interface RecentlyPlayedApi {
     state: 'idle' | 'pending' | 'succeeded' | 'failed';
     requests: number;
-    history: HistoryApiEntry[];
 }
 
+// TODO: apiError per api
+interface SearchApi extends RecentlyPlayedApi {
+    currentIndex: number;
+}
+
+export interface SortConfig {
+    col: number;
+    asc: boolean;
+}
+
+// ^^^ Additional types ^^^
+
 interface AppState {
-    history: HistoryEntry[];
-    backupFile: BackupFile | null;
-    historyApi: HistoryApi;
+    history: ExporterApiExtendedHistoryItem[];
+    recentlyPlayed: RecentlyPlayedItem[];
+    backupFilename: string | undefined;
+    recentlyPlayedApi: RecentlyPlayedApi;
+    searchApi: SearchApi;
+    apiError: string | null;
+    searchCache: SearchCache;
+    sortConfig: SortConfig;
 }
 
 const initialState: AppState = {
     history: [],
-    backupFile: null,
-    historyApi: {
+    recentlyPlayed: [],
+    backupFilename: undefined,
+    recentlyPlayedApi: {
         state: 'idle',
         requests: 0,
-        history: [],
     },
+    searchApi: {
+        state: 'idle',
+        requests: 0,
+        currentIndex: 0,
+    },
+    apiError: null,
+    searchCache: {},
+    sortConfig: { col: 1, asc: false },
 };
 
 const stateSlice = createSlice({
@@ -35,59 +71,82 @@ const stateSlice = createSlice({
     initialState,
     reducers: {
         backupFileLoaded: (state, { payload }: PayloadAction<BackupFile>) => {
-            state.history = payload.history;
-            state.backupFile = payload;
-            state.historyApi = initialState.historyApi;
+            state.backupFilename = payload.filename;
+
+            if (Array.isArray(payload.content)) {
+                state.history = payload.content;
+            } else {
+                state.history = payload.content.history;
+                state.searchCache = payload.content.searchCache;
+            }
+        },
+        sortConfigChanged: (state, { payload }: PayloadAction<{ col: number }>) => {
+            const prevSort = state.sortConfig;
+
+            if (payload.col === prevSort.col) {
+                state.sortConfig.asc = !prevSort.asc;
+            } else {
+                state.sortConfig.col = payload.col;
+            }
         },
     },
     extraReducers: builder => {
         builder
-            .addCase(historySliceFetched, (state, { payload }) => {
-                state.historyApi.requests += 1;
-                state.historyApi.history.push(...payload);
+            .addCase(recentlyPlayedSliceFetched, (state, { payload }) => {
+                state.recentlyPlayedApi.requests += 1;
+                state.recentlyPlayed.push(...payload);
             })
-            .addCase(fetchHistory.pending, state => {
-                state.historyApi = {
-                    ...initialState.historyApi,
+            .addCase(fetchRecentlyPlayed.pending, state => {
+                state.recentlyPlayedApi = {
+                    ...initialState.recentlyPlayedApi,
+                    state: 'pending',
+                };
+                state.recentlyPlayed = [];
+            })
+            .addCase(fetchRecentlyPlayed.rejected, state => {
+                state.recentlyPlayedApi.state = 'failed';
+            })
+            .addCase(fetchRecentlyPlayed.fulfilled, state => {
+                state.recentlyPlayedApi.state = 'succeeded';
+            })
+            .addCase(searchResultsFetched, (state, { payload }) => {
+                state.searchCache[payload.query] = payload.response;
+            })
+            .addCase(apiRequestFailed, (state, { payload }) => {
+                state.apiError = payload.message;
+            })
+            // TODO:
+            // .addCase(searchForTrack.pending, (state) => {
+            // })
+            // .addCase(searchForTrack.rejected, (state) => {
+            // })
+            .addCase(searchForTrack.fulfilled, (state, { payload }) => {
+                const item = state.history[state.searchApi.currentIndex];
+
+                if (
+                    payload &&
+                    item.trackName === payload.name &&
+                    item.artistName === payload.artists.at(0)?.name
+                ) {
+                    item.track = payload;
+                }
+                state.searchApi.currentIndex += 1;
+            })
+            .addCase(fetchHistoryDetails.pending, state => {
+                state.searchApi = {
+                    ...initialState.searchApi,
                     state: 'pending',
                 };
             })
-            .addCase(fetchHistory.rejected, state => {
-                state.historyApi.state = 'failed';
+            .addCase(fetchHistoryDetails.rejected, state => {
+                state.searchApi.state = 'failed';
             })
-            .addCase(fetchHistory.fulfilled, state => {
-                state.historyApi.state = 'succeeded';
-
-                if (!state.backupFile) {
-                    state.history = state.historyApi.history;
-                    return;
-                }
-
-                const lastBackupEntry = selectLastBackupEntry({ state })?.played_at ?? '';
-                const fetchedOverlap = state.historyApi.history.findIndex(
-                    e => e.played_at === lastBackupEntry
-                );
-
-                if (fetchedOverlap === -1) {
-                    state.history = [
-                        ...state.historyApi.history,
-                        { gap: true },
-                        ...state.backupFile.history,
-                    ];
-                    return;
-                }
-
-                state.history = [
-                    ...state.historyApi.history.slice(
-                        0,
-                        fetchedOverlap - state.historyApi.history.length
-                    ),
-                    ...state.backupFile.history,
-                ];
+            .addCase(fetchHistoryDetails.fulfilled, state => {
+                state.searchApi.state = 'succeeded';
             });
     },
 });
 
-export const { backupFileLoaded } = stateSlice.actions;
+export const { backupFileLoaded, sortConfigChanged } = stateSlice.actions;
 
 export const stateReducer = stateSlice.reducer;

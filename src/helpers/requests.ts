@@ -1,6 +1,8 @@
 import qs from 'qs';
 import { getQueryParams, pkceChallengeFromVerifier } from '@/utils/utils';
-import { RecentlyPlayedResponse } from '@/types/spotifyApi';
+import { RecentlyPlayedResponse } from '@/types/recentlyPlayedApi';
+import { SearchResponse } from '@/types/searchApi';
+import { ApiError } from '@/types/spotifyApi';
 
 const BASE_URI = 'https://api.spotify.com/v1';
 
@@ -69,5 +71,22 @@ export const getRecentlyPlayed = (token: Token, nextUrl?: string) =>
     }).then(
         res =>
             // TODO: super unsafe
+            // TODO: errors
             res.json() as Promise<RecentlyPlayedResponse>
     );
+
+export const searchForItem = (token: Token, query: string, itemTypes: string[]) =>
+    fetch(`${BASE_URI}/search?q=${query}&type=${itemTypes.join(',')}&include_external=audio`, {
+        headers: {
+            Authorization: `${token.token_type} ${token.access_token}`,
+            'Content-Type': 'application/json',
+        },
+    }).then(async res => {
+        if (!res.ok) {
+            const json = (await res.json()) as ApiError;
+            throw Error(`${json.status} ${json.message}`);
+        }
+
+        // TODO: super unsafe
+        return res.json() as Promise<SearchResponse>;
+    });
