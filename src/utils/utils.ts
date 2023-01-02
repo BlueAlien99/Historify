@@ -20,10 +20,10 @@ export const pkceChallengeFromVerifier = async (v: string) => base64URLEncode(aw
 
 export const getQueryParams = () => new URLSearchParams(window.location.search);
 
-export const msToMin = (ms: number) => (ms / (60 * 1000)).toFixed();
+export const niceNumber = (val: number) =>
+    val.toFixed().length <= 1 ? val.toFixed(1) : val.toFixed();
+
+export const msToMin = (ms: number) => niceNumber(ms / (60 * 1000));
 
 export const trackArtistQuery = (track: string, artist: string) =>
     `track:${track} artist:${artist}`;
-
-export const niceNumber = (val: number) =>
-    val.toFixed().length <= 1 ? val.toFixed(1) : val.toFixed();
