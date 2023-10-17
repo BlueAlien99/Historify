@@ -1,4 +1,4 @@
-import { ExporterApiExtendedHistoryItem, ExporterApiHistoryItem } from '@/types/exporterApi';
+import { ExporterApiExtendedHistoryItem, ExporterApiHistoryItemV1 } from '@/types/exporterApi';
 import { Artist, Track } from '@/types/spotifyApi';
 import { msToMin, niceNumber, trackArtistQuery } from '@/utils/utils';
 import ArtistsStatsTable from './ArtistsStatsTable';
@@ -9,7 +9,7 @@ import TracksStatsTable from './TracksStatsTable';
 type TrackAggr = Record<
     string,
     {
-        track: Track | Pick<ExporterApiHistoryItem, 'trackName' | 'artistName'>;
+        track: Track | Pick<ExporterApiHistoryItemV1, 'trackName' | 'artistName'>;
         count: number;
         duration: number;
     }

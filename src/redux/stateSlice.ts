@@ -1,8 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ExporterApiExtendedHistoryItem, ExporterApiHistoryItem } from '@/types/exporterApi';
+import {
+    ExporterApiExtendedHistoryItem,
+    ExporterApiHistoryItem,
+    ExporterApiHistoryItemV1,
+    ExporterApiHistoryItemV2,
+} from '@/types/exporterApi';
 import { RecentlyPlayedItem } from '@/types/recentlyPlayedApi';
 import { SearchResponse } from '@/types/searchApi';
 import { apiRequestFailed, searchResultsFetched } from '@/helpers/search';
+import { exporterApiHistoryItemV2ToV1, isExporterApiHistoryItemV2 } from '../utils/types';
 import {
     fetchHistoryDetails,
     fetchRecentlyPlayed,
@@ -16,7 +22,7 @@ export interface BackupFile {
     filename: string;
     content:
         | ExporterApiHistoryItem[]
-        | { history: ExporterApiHistoryItem[]; searchCache: SearchCache };
+        | { history: ExporterApiHistoryItemV1[]; searchCache: SearchCache };
 }
 
 interface RecentlyPlayedApi {
@@ -73,12 +79,22 @@ const stateSlice = createSlice({
         backupFileLoaded: (state, { payload }: PayloadAction<BackupFile>) => {
             state.backupFilename = payload.filename;
 
-            if (Array.isArray(payload.content)) {
-                state.history = payload.content;
-            } else {
-                state.history = payload.content.history;
-                state.searchCache = payload.content.searchCache;
+            // TODO: refactor and remove casting
+
+            if (Array.isArray(payload.content) && isExporterApiHistoryItemV2(payload.content[0])) {
+                state.history = (payload.content as ExporterApiHistoryItemV2[])
+                    .map(exporterApiHistoryItemV2ToV1)
+                    .sort((a, b) => a.endTime.localeCompare(b.endTime));
+                return;
             }
+
+            if (Array.isArray(payload.content)) {
+                state.history = payload.content as ExporterApiHistoryItemV1[];
+                return;
+            }
+
+            state.history = payload.content.history;
+            state.searchCache = payload.content.searchCache;
         },
         sortConfigChanged: (state, { payload }: PayloadAction<{ col: number }>) => {
             const prevSort = state.sortConfig;

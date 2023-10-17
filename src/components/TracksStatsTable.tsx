@@ -4,13 +4,13 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { getSortMark, sort } from '@/utils/stats';
 import { sortConfigChanged } from '@/redux/stateSlice';
 import { Track } from '@/types/spotifyApi';
-import { ExporterApiHistoryItem } from '@/types/exporterApi';
+import { ExporterApiHistoryItemV1 } from '@/types/exporterApi';
 import Audio from './Audio';
 
 // TODO: use objects instead of error-prone tuples
 
 type TracksStatsData = Array<
-    readonly [Track | Pick<ExporterApiHistoryItem, 'trackName' | 'artistName'>, number, number]
+    readonly [Track | Pick<ExporterApiHistoryItemV1, 'trackName' | 'artistName'>, number, number]
 >;
 
 const getTableRow = (item: TracksStatsData[number]) => {
